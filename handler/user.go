@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -103,7 +104,9 @@ func (h *Handler) Login(c echo.Context) error {
 		return HTTPError(http.StatusInternalServerError, err, "failed to get user")
 	}
 
-	if err := util.VerifyPassword(user.Password, req.Password); err != nil {
+	log.Println(user)
+
+	if err := util.VerifyPassword(req.Password, user.Password); err != nil {
 		return HTTPError(http.StatusBadRequest, err, "invalid email or password")
 	}
 

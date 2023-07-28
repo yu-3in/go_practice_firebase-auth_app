@@ -17,7 +17,7 @@ func Routing(e *echo.Echo, db *gorm.DB) {
 
 	e.POST("/signup", h.CreateUser)
 	e.POST("/login", h.Login)
-	e.POST("/logout", h.Logout)
+	auth.POST("/logout", h.Logout)
 
 	auth.GET("/user", h.GetUser)
 	auth.PUT("/user", h.UpdateUser)
