@@ -10,7 +10,7 @@ import (
 )
 
 type UserClaims struct {
-	UserID string `json:"user_id"`
+	UserID string `json:"userID"`
 	jwt.StandardClaims
 }
 
@@ -25,8 +25,8 @@ func GenerateToken(userID uint) (string, error) {
 		return "", err
 	}
 	claims := jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(jwtExpiresIn).Unix(),
+		"userID": userID,
+		"exp":    time.Now().Add(jwtExpiresIn).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(jwtSecretKey))
@@ -59,15 +59,15 @@ func ParseToken(c echo.Context) (uint, error) {
 	if !ok {
 		return 0, errors.New("failed to get claims")
 	}
-	userID, ok := claims["user_id"].(float64)
+	userID, ok := claims["userID"].(float64)
 	if !ok {
-		return 0, errors.New("failed to get user_id")
+		return 0, errors.New("failed to get userID")
 	}
 	return uint(userID), nil
 }
 
 func GetUserID(c echo.Context) (uint, error) {
-	userID, ok := c.Get("user_id").(uint)
+	userID, ok := c.Get("userID").(uint)
 	if !ok {
 		return 0, echo.ErrUnauthorized
 	}

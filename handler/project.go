@@ -17,7 +17,7 @@ func (h *Handler) CreateProject(c echo.Context) error {
 
 	userID, err := util.GetUserID(c)
 	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user_id")
+		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
 	}
 
 	if err := c.Validate(req); err != nil {
@@ -51,7 +51,7 @@ func (h *Handler) GetProjects(c echo.Context) error {
 func (h *Handler) GetOwnerProjects(c echo.Context) error {
 	userID, err := util.GetUserID(c)
 	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user_id")
+		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
 	}
 
 	projects, err := h.repo.GetOwnerProjects(userID)
@@ -68,7 +68,7 @@ func (h *Handler) GetOwnerProjects(c echo.Context) error {
 func (h *Handler) GetMemberProjects(c echo.Context) error {
 	userID, err := util.GetUserID(c)
 	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user_id")
+		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
 	}
 
 	projects, err := h.repo.GetMemberProjects(userID)

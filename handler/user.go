@@ -37,7 +37,7 @@ func (h *Handler) CreateUser(c echo.Context) error {
 func (h *Handler) GetUser(c echo.Context) error {
 	userID, err := util.GetUserID(c)
 	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user_id")
+		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
 	}
 	user, err := h.repo.GetUser(userID)
 	if err != nil {
@@ -57,7 +57,7 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 
 	userID, err := util.GetUserID(c)
 	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user_id")
+		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
 	}
 
 	if err := c.Validate(req); err != nil {
@@ -82,7 +82,7 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 func (h *Handler) DeleteUser(c echo.Context) error {
 	userID, err := util.GetUserID(c)
 	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user_id")
+		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
 	}
 
 	if err := h.repo.DeleteUser(userID); err != nil {
@@ -116,4 +116,8 @@ func (h *Handler) Login(c echo.Context) error {
 		"token": token,
 		"user":  dto.UserModelToUserResponse(user),
 	})
+}
+
+func (h *Handler) Logout(c echo.Context) error {
+	return c.NoContent(http.StatusNoContent)
 }

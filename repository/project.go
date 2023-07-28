@@ -42,7 +42,7 @@ func (r *Repository) GetOwnerProjects(ownerID uint) ([]*model.Project, error) {
 
 func (r *Repository) GetMemberProjects(userID uint) ([]*model.Project, error) {
 	var projects []*model.Project
-	if err := r.db.Preload(clause.Associations).Joins("JOIN project_members ON projects.id = project_members.project_id").Where("project_members.user_id = ?", userID).Find(&projects).Error; err != nil {
+	if err := r.db.Preload(clause.Associations).Joins("JOIN project_members ON projects.id = project_members.project_id").Where("project_members.ID = ?", userID).Find(&projects).Error; err != nil {
 		return nil, err
 	}
 	return projects, nil

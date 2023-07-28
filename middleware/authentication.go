@@ -11,7 +11,7 @@ func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return echo.ErrUnauthorized
 		}
-		c.Set("user_id", userID)
+		c.Set("userID", userID)
 
 		return next(c)
 	}

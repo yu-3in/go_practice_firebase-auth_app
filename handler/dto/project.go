@@ -8,24 +8,24 @@ import (
 type CreateProjectRequest struct {
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	MemberIDs   []uint `json:"member_ids"`
-	CategoryID  uint   `json:"category_id" validate:"required"`
+	MemberIDs   []uint `json:"memberIds"`
+	CategoryID  uint   `json:"categoryId" validate:"required"`
 }
 
 type CreateProjectResponse struct {
 	gorm.Model
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	OwnerID     uint   `json:"owner_id"`
-	MemberIDs   []uint `json:"member_ids"`
-	CategoryID  uint   `json:"category_id"`
+	OwnerID     uint   `json:"ownerId"`
+	MemberIDs   []uint `json:"memberIds"`
+	CategoryID  uint   `json:"categoryId"`
 }
 
 type UpdateProjectRequest struct {
 	Name        string `json:"name" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	MemberIDs   []uint `json:"member_ids"`
-	CategoryID  uint   `json:"category_id" validate:"required"`
+	MemberIDs   []uint `json:"memberIds"`
+	CategoryID  uint   `json:"categoryId" validate:"required"`
 }
 
 type ProjectResponse struct {

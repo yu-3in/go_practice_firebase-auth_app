@@ -24,10 +24,9 @@ type LoginRequest struct {
 
 type UserResponse struct {
 	gorm.Model
-	Name     string            `json:"name"`
-	Email    string            `json:"email"`
-	Point    int               `json:"point"`
-	Projects []ProjectResponse `json:"projects"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Point int    `json:"point"`
 }
 
 func CreateUserRequestToUserModel(r *CreateUserRequest) *model.User {
