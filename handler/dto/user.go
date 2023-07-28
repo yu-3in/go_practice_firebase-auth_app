@@ -5,11 +5,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserRequest struct {
+type CreateUserRequest struct {
 	Name     string `json:"name" validate:"required"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8"`
-	Point    int    `json:"point"`
+}
+
+type UpdateUserRequest struct {
+	Name  string `json:"name" validate:"required"`
+	Email string `json:"email" validate:"required,email"`
+	Point int    `json:"point"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8"`
 }
 
 type UserResponse struct {
@@ -19,12 +29,24 @@ type UserResponse struct {
 	Point int    `json:"point"`
 }
 
-func UserRequestToUserModel(r *UserRequest) *model.User {
+func CreateUserRequestToUserModel(r *CreateUserRequest) *model.User {
 	return &model.User{
 		Name:     r.Name,
 		Email:    r.Email,
 		Password: r.Password,
-		Point:    r.Point,
+	}
+}
+
+func UpdateUserRequestToUserModel(r *UpdateUserRequest, user *model.User) {
+	user.Name = r.Name
+	user.Email = r.Email
+	user.Point = r.Point
+}
+
+func LoginRequestToUserModel(r *LoginRequest) *model.User {
+	return &model.User{
+		Email:    r.Email,
+		Password: r.Password,
 	}
 }
 

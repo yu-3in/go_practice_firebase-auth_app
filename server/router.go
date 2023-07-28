@@ -16,10 +16,8 @@ func Routing(e *echo.Echo, db *gorm.DB) {
 	auth := e.Group("", middleware.AuthenticationMiddleware)
 
 	e.POST("/signup", h.CreateUser)
-	// e.POST("/login", h.login)
+	e.POST("/login", h.Login)
 	auth.GET("/user", h.GetUser)
-	// e.PUT("/users", h.updateUser)
-	// e.DELETE("/users/:id", h.deleteUser)
-	// e.POST("/login", h.login)
-	// e.GET("/me", h.me)
+	auth.PUT("/user", h.UpdateUser)
+	auth.DELETE("/user", h.DeleteUser)
 }
