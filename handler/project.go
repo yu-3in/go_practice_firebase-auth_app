@@ -6,7 +6,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/yuuumiravy/go_practice_projects_firebase-auth_app_2023_07/handler/dto"
-	"github.com/yuuumiravy/go_practice_projects_firebase-auth_app_2023_07/util"
 )
 
 func (h *Handler) CreateProject(c echo.Context) error {
@@ -15,17 +14,12 @@ func (h *Handler) CreateProject(c echo.Context) error {
 		return HTTPError(http.StatusBadRequest, err, "bad request")
 	}
 
-	userID, err := util.GetUserID(c)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
-	}
-
 	if err := c.Validate(req); err != nil {
 		return HTTPError(http.StatusBadRequest, err, "validation error")
 	}
 
 	project := dto.CreateProjectRequestToProjectModel(req)
-	project.OwnerID = userID
+	project.OwnerID = c.Get("userID").(string)
 
 	if err := h.repo.CreateProject(project); err != nil {
 		return HTTPError(http.StatusInternalServerError, err, "failed to create project")
@@ -49,10 +43,7 @@ func (h *Handler) GetProjects(c echo.Context) error {
 
 // 自分がオーナーであるプロジェクトを取得
 func (h *Handler) GetOwnerProjects(c echo.Context) error {
-	userID, err := util.GetUserID(c)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
-	}
+	userID := c.Get("userID").(string)
 
 	projects, err := h.repo.GetOwnerProjects(userID)
 	if err != nil {
@@ -66,10 +57,7 @@ func (h *Handler) GetOwnerProjects(c echo.Context) error {
 
 // 自分がメンバーであるプロジェクトを取得
 func (h *Handler) GetMemberProjects(c echo.Context) error {
-	userID, err := util.GetUserID(c)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
-	}
+	userID := c.Get("userID").(string)
 
 	projects, err := h.repo.GetMemberProjects(userID)
 	if err != nil {

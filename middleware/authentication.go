@@ -7,11 +7,24 @@ import (
 
 func AuthenticationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID, err := util.ParseToken(c)
+		app, err := util.InitFirebaseApp(c)
 		if err != nil {
-			return echo.ErrUnauthorized
+			return err
 		}
-		c.Set("userID", userID)
+		client, err := app.Auth(c.Request().Context())
+		if err != nil {
+			return err
+		}
+		token, err := util.VerifyIDToken(c, client)
+		if err != nil {
+			return err
+		}
+		fbUser, err := client.GetUser(c.Request().Context(), token.UID)
+		if err != nil {
+			return err
+		}
+
+		c.Set("userID", fbUser.UID)
 
 		return next(c)
 	}

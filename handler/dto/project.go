@@ -6,26 +6,26 @@ import (
 )
 
 type CreateProjectRequest struct {
-	Name        string `json:"name" validate:"required"`
-	Description string `json:"description" validate:"required"`
-	MemberIDs   []uint `json:"memberIds"`
-	CategoryID  uint   `json:"categoryId" validate:"required"`
+	Name        string   `json:"name" validate:"required"`
+	Description string   `json:"description" validate:"required"`
+	MemberIDs   []string `json:"memberIds"`
+	CategoryID  uint     `json:"categoryId" validate:"required"`
 }
 
 type CreateProjectResponse struct {
 	gorm.Model
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	OwnerID     uint   `json:"ownerId"`
-	MemberIDs   []uint `json:"memberIds"`
-	CategoryID  uint   `json:"categoryId"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	OwnerID     string   `json:"ownerId"`
+	MemberIDs   []string `json:"memberIds"`
+	CategoryID  uint     `json:"categoryId"`
 }
 
 type UpdateProjectRequest struct {
-	Name        string `json:"name" validate:"required"`
-	Description string `json:"description" validate:"required"`
-	MemberIDs   []uint `json:"memberIds"`
-	CategoryID  uint   `json:"categoryId" validate:"required"`
+	Name        string   `json:"name" validate:"required"`
+	Description string   `json:"description" validate:"required"`
+	MemberIDs   []string `json:"memberIds"`
+	CategoryID  uint     `json:"categoryId" validate:"required"`
 }
 
 type ProjectResponse struct {

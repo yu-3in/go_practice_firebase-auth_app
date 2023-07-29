@@ -10,9 +10,26 @@ import (
 )
 
 func (h *Handler) CreateUser(c echo.Context) error {
-	req := new(dto.CreateUserRequest)
-	if err := c.Bind(&req); err != nil {
-		return HTTPError(http.StatusBadRequest, err, "bad request")
+	app, err := util.InitFirebaseApp(c)
+	if err != nil {
+		return err
+	}
+	client, err := app.Auth(c.Request().Context())
+	if err != nil {
+		return err
+	}
+	token, err := util.VerifyIDToken(c, client)
+	if err != nil {
+		return err
+	}
+	fbUser, err := client.GetUser(c.Request().Context(), token.UID)
+	if err != nil {
+		return err
+	}
+
+	req := &dto.CreateUserRequest{
+		Email: fbUser.Email,
+		Name:  fbUser.DisplayName,
 	}
 
 	if err := c.Validate(req); err != nil {
@@ -20,26 +37,21 @@ func (h *Handler) CreateUser(c echo.Context) error {
 	}
 
 	user := dto.CreateUserRequestToUserModel(req)
+	user.ID = fbUser.UID
 
 	if err := h.repo.CreateUser(user); err != nil {
 		return HTTPError(http.StatusInternalServerError, err, "failed to create user")
 	}
 
-	token, err := util.GenerateToken(user.ID)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to generate token")
-	}
 	return c.JSON(http.StatusCreated, echo.Map{
-		"token": token,
-		"user":  dto.UserModelToUserResponse(user),
+		"user": dto.UserModelToUserResponse(user),
 	})
 }
 
 func (h *Handler) GetUser(c echo.Context) error {
-	userID, err := util.GetUserID(c)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
-	}
+	userID := c.Get("userID").(string)
+	log.Println("GetUser", userID)
+
 	user, err := h.repo.GetUser(userID)
 	if err != nil {
 		return HTTPError(http.StatusInternalServerError, err, "failed to get user")
@@ -56,10 +68,7 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 		return HTTPError(http.StatusBadRequest, err, "bad request")
 	}
 
-	userID, err := util.GetUserID(c)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
-	}
+	userID := c.Get("userID").(string)
 
 	if err := c.Validate(req); err != nil {
 		return HTTPError(http.StatusBadRequest, err, "validation error")
@@ -81,46 +90,11 @@ func (h *Handler) UpdateUser(c echo.Context) error {
 }
 
 func (h *Handler) DeleteUser(c echo.Context) error {
-	userID, err := util.GetUserID(c)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get userID")
-	}
+	userID := c.Get("userID").(string)
 
 	if err := h.repo.DeleteUser(userID); err != nil {
 		return HTTPError(http.StatusInternalServerError, err, "failed to delete user")
 	}
 
-	return c.NoContent(http.StatusNoContent)
-}
-
-func (h *Handler) Login(c echo.Context) error {
-	req := new(dto.LoginRequest)
-	if err := c.Bind(&req); err != nil {
-		return HTTPError(http.StatusBadRequest, err, "bad request")
-	}
-
-	user, err := h.repo.GetUserByEmail(req.Email)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to get user")
-	}
-
-	log.Println(user)
-
-	if err := util.VerifyPassword(req.Password, user.Password); err != nil {
-		return HTTPError(http.StatusBadRequest, err, "invalid email or password")
-	}
-
-	token, err := util.GenerateToken(user.ID)
-	if err != nil {
-		return HTTPError(http.StatusInternalServerError, err, "failed to generate token")
-	}
-
-	return c.JSON(http.StatusOK, echo.Map{
-		"token": token,
-		"user":  dto.UserModelToUserResponse(user),
-	})
-}
-
-func (h *Handler) Logout(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }

@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/yuuumiravy/go_practice_projects_firebase-auth_app_2023_07/model"
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -32,7 +31,7 @@ func (r *Repository) GetProjects() ([]*model.Project, error) {
 	return projects, nil
 }
 
-func (r *Repository) GetOwnerProjects(ownerID uint) ([]*model.Project, error) {
+func (r *Repository) GetOwnerProjects(ownerID string) ([]*model.Project, error) {
 	var projects []*model.Project
 	if err := r.db.Preload(clause.Associations).Where("owner_id = ?", ownerID).Find(&projects).Error; err != nil {
 		return nil, err
@@ -40,7 +39,7 @@ func (r *Repository) GetOwnerProjects(ownerID uint) ([]*model.Project, error) {
 	return projects, nil
 }
 
-func (r *Repository) GetMemberProjects(userID uint) ([]*model.Project, error) {
+func (r *Repository) GetMemberProjects(userID string) ([]*model.Project, error) {
 	var projects []*model.Project
 	if err := r.db.Preload(clause.Associations).Joins("JOIN project_members ON projects.id = project_members.project_id").Where("project_members.ID = ?", userID).Find(&projects).Error; err != nil {
 		return nil, err
@@ -62,7 +61,7 @@ func (r *Repository) DeleteProject(projectID uint) error {
 func (r *Repository) SetProjectMembers(project *model.Project) error {
 	members := make([]model.User, len(project.MemberIDs))
 	for i, memberID := range project.MemberIDs {
-		members[i] = model.User{Model: gorm.Model{ID: memberID}}
+		members[i] = model.User{StringIDModel: model.StringIDModel{ID: memberID}}
 	}
 	project.Members = members
 	return nil
